@@ -3,5 +3,12 @@
   "C-002": { "id": "C-002", "nombre": "Lucía Andrade", "cedula": "1702002002", "edad": 29, "marca_base": "Wellderma", "smartclub": true, "opt_in_personalizacion": true, "cashback": 23.8, "rol_demo": "control_sin_shock_skincare" },
   "C-003": { "id": "C-003", "nombre": "María Zambrano", "cedula": "1712345678", "edad": 38, "marca_base": "Medicity", "smartclub": true, "opt_in_personalizacion": true, "cashback": 41.2, "rol_demo": "DEMO_shock" },
   "C-004": { "id": "C-004", "nombre": "Carlos Paredes", "cedula": "1704004004", "edad": 52, "marca_base": "Económicas", "smartclub": false, "opt_in_personalizacion": false, "cashback": 0.0, "rol_demo": "control_cronico" },
-  "C-005": { "id": "C-005", "nombre": "Daniela Espinoza", "cedula": "1705005005", "edad": 34, "marca_base": "Medicity", "smartclub": true, "opt_in_personalizacion": true, "cashback": 12.5, "rol_demo": "shock_prueba_en_vivo" }
+  "C-005": { "id": "C-005", "nombre": "Daniela Espinoza", "cedula": "1705005005", "edad": 34, "marca_base": "Medicity", "smartclub": true, "opt_in_personalizacion": true, "cashback": 12.5, "rol_demo": "shock_prueba_en_vivo" },
+  "C-006": { "id": "C-006", "nombre": "Rosa Morales", "cedula": "1706006006", "edad": 58, "marca_base": "Medicity", "smartclub": true, "opt_in_personalizacion": true, "cashback": 18.5, "rol_demo": "cronico_hipertension" },
+  "C-007": { "id": "C-007", "nombre": "Fausto Benítez", "cedula": "1707007007", "edad": 63, "marca_base": "Económicas", "smartclub": true, "opt_in_personalizacion": true, "cashback": 32.0, "rol_demo": "cronico_metabolico" },
+  "C-008": { "id": "C-008", "nombre": "Mateo Cárdenas", "cedula": "1708008008", "edad": 31, "marca_base": "Wellderma", "smartclub": true, "opt_in_personalizacion": true, "cashback": 15.4, "rol_demo": "bienestar_rendimiento" },
+  "C-009": { "id": "C-009", "nombre": "Sofía Villacís", "cedula": "1709009009", "edad": 27, "marca_base": "Wellderma", "smartclub": true, "opt_in_personalizacion": true, "cashback": 28.0, "rol_demo": "bienestar_skincare" },
+  "C-010": { "id": "C-010", "nombre": "Gabriel Mendoza", "cedula": "1710010010", "edad": 26, "marca_base": "Mascotas", "smartclub": false, "opt_in_personalizacion": false, "cashback": 0.0, "rol_demo": "esporadico_mascotas" },
+  "C-011": { "id": "C-011", "nombre": "Andrea Salazar", "cedula": "1711011011", "edad": 33, "marca_base": "Ambiente", "smartclub": false, "opt_in_personalizacion": false, "cashback": 0.0, "rol_demo": "esporadico_hogar" },
+  "C-012": { "id": "C-012", "nombre": "Jorge Navarrete", "cedula": "1712012012", "edad": 42, "marca_base": "Económicas", "smartclub": false, "opt_in_personalizacion": false, "cashback": 0.0, "rol_demo": "esporadico_urgencia" }
 }

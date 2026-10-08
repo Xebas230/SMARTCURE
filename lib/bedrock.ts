@@ -135,3 +135,71 @@ export async function getCopy(
   cache.set(cedula, entry);
   return { texto: fb, fuente: "RESPALDO" };
 }
+
+export async function generateABVariantCopy(
+  personaTitulo: string,
+  varianteId: "A" | "B",
+  enfoque: string,
+  beneficio: string
+): Promise<{ copyWhatsapp: string; copyCajero: string; fuente: "REAL" | "RESPALDO" }> {
+  if (!hasCreds()) {
+    return {
+      copyWhatsapp: `Hola estimado socio SmartClub. Como beneficio especial para ${personaTitulo.toLowerCase()}, tienes disponible ${beneficio}. Acércate a nuestros locales y cuida tu bienestar familiar.`,
+      copyCajero: `Próxima acción recomendada: Informar al socio sobre ${beneficio}. Proteger margen y no ofrecer descuentos en medicamentos crónicos.`,
+      fuente: "RESPALDO",
+    };
+  }
+
+  await waitRateLimit();
+  const client = new BedrockRuntimeClient({
+    region: process.env.AWS_DEFAULT_REGION ?? process.env.AWS_REGION ?? "us-east-1",
+  });
+
+  const sistema =
+    "Eres el redactor experto en marketing de fidelización del programa SmartCure para Farmaenlace (Medicity, Farmacias Económicas, Wellderma, Mascota's, Ambiente). " +
+    "Reglas estrictas: tono cálido, empático, español ecuatoriano, SIN emojis. " +
+    "NUNCA mencionar medicamentos, nombres comerciales de fármacos, enfermedades, patologías ni condiciones médicas. " +
+    "No usar la palabra 'sabemos'. Máximo 260 caracteres para WhatsApp. " +
+    'Responde ÚNICAMENTE un JSON plano (sin formato markdown): {"copy_whatsapp": string, "copy_cajero": string}.';
+
+  const user = JSON.stringify({
+    buyer_persona: personaTitulo,
+    variante_test_ab: varianteId,
+    estrategia_enfoque: enfoque,
+    beneficio_comercial: beneficio,
+    instruccion:
+      "Redacta el mensaje de WhatsApp para el socio y una instrucción concisa para la pantalla del cajero (próxima mejor acción).",
+  });
+
+  for (const modelId of MODEL_IDS) {
+    try {
+      const cmd = new ConverseCommand({
+        modelId,
+        system: [{ text: sistema }],
+        messages: [{ role: "user", content: [{ text: user }] }],
+        inferenceConfig: { temperature: 0.3, maxTokens: 600 },
+      });
+      const res = await client.send(cmd);
+      const text =
+        res.output?.message?.content
+          ?.map((c) => ("text" in c ? c.text : ""))
+          .join("") ?? "";
+      const parsed = validateBedrockOutput(text);
+      if (parsed?.copy_whatsapp && parsed?.copy_cajero) {
+        return {
+          copyWhatsapp: parsed.copy_whatsapp,
+          copyCajero: parsed.copy_cajero,
+          fuente: "REAL",
+        };
+      }
+    } catch {
+      // probar siguiente modelo
+    }
+  }
+
+  return {
+    copyWhatsapp: `Hola estimado socio SmartClub. Como beneficio de este mes enfocado en tu tranquilidad, accede a ${beneficio}. Presenta tu cédula en caja.`,
+    copyCajero: `Próxima acción en caja: Indicar beneficio activo de ${beneficio}. Cero descuento en crónicos.`,
+    fuente: "RESPALDO",
+  };
+}

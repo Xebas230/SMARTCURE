@@ -93,3 +93,71 @@ export interface OfferResult {
   copy_cajero: string;
   fuente: "REAL" | "RESPALDO";
 }
+
+export type PersonaId = "cronico" | "bienestar" | "esporadico";
+
+export interface ABVariant {
+  id: "A" | "B";
+  nombre: string;
+  enfoque: string;
+  beneficio: string;
+  copyWhatsapp: string;
+  copyCajero: string;
+  tasaApertura: number;
+  tasaConversion: number;
+  ticketEstimado: number;
+  margenIncremental: number;
+  muestraPct: number;
+  fuenteCopy: "REAL" | "RESPALDO";
+}
+
+export interface ABCampaign {
+  id: string;
+  personaId: PersonaId;
+  nombreCampana: string;
+  varianteA: ABVariant;
+  varianteB: ABVariant;
+  ganador: "A" | "B";
+  razonGanador: string;
+  upliftConversionPct: number;
+  desplegada: boolean;
+  impactosMesPorCliente: number; // Regla de oro: Máx 2 al mes
+}
+
+export interface BuyerPersona {
+  id: PersonaId;
+  titulo: string;
+  subtitulo: string;
+  descripcion: string;
+  icono: string;
+  color: string;
+  reglaMargen: string;
+  totalClientes: number;
+  ticketPromedio: number;
+  frecuenciaPromedioMes: number;
+  marcasAfinidad: string[];
+  campanaAB?: ABCampaign;
+}
+
+export interface SegmentedClient extends Client {
+  personaId: PersonaId;
+  personaTitulo: string;
+  comprasTotal: number;
+  gastoTotal: number;
+  ticketPromedio: number;
+  ultimaCompra: string;
+  afinidadCategoria: string;
+  marcasFrecuentes: string[];
+  tieneCronico: boolean;
+  frecuenciaMensual: number;
+}
+
+export interface DatasetStats {
+  totalClientes: number;
+  totalTransacciones: number;
+  sociosSmartclub: number;
+  sociosSmartclubPct: number;
+  ltvPromedio: number;
+  gastoTotal: number;
+  marcasPresentes: string[];
+}

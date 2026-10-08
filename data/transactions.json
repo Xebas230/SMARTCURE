@@ -173,6 +173,27 @@
     { "id": "T-C005-202610-04", "cliente_id": "C-005", "fecha": "2026-10-07", "sku": "PAÑALES-M", "cantidad": 1, "monto": 18, "canal": "pos", "pdv": "Medicity_Republica" },
     { "id": "T-C005-202610-05", "cliente_id": "C-005", "fecha": "2026-10-07", "sku": "FORMULA-800", "cantidad": 1, "monto": 21, "canal": "pos", "pdv": "Medicity_Republica" },
     { "id": "T-C005-202610-06", "cliente_id": "C-005", "fecha": "2026-10-07", "sku": "VITAMINA-C", "cantidad": 1, "monto": 8, "canal": "pos", "pdv": "Medicity_Republica" },
-    { "id": "T-C005-202610-07", "cliente_id": "C-005", "fecha": "2026-10-07", "sku": "TOALLITAS", "cantidad": 1, "monto": 9, "canal": "pos", "pdv": "Medicity_Republica" }
+    { "id": "T-C005-202610-07", "cliente_id": "C-005", "fecha": "2026-10-07", "sku": "TOALLITAS", "cantidad": 1, "monto": 9, "canal": "pos", "pdv": "Medicity_Republica" },
+    { "id": "T-C006-202609-01", "cliente_id": "C-006", "fecha": "2026-09-05", "sku": "LEVOTIROXINA", "cantidad": 1, "monto": 10, "canal": "pos", "pdv": "Medicity_Shyris" },
+    { "id": "T-C006-202609-02", "cliente_id": "C-006", "fecha": "2026-09-05", "sku": "LOSARTAN-50", "cantidad": 1, "monto": 12, "canal": "pos", "pdv": "Medicity_Shyris" },
+    { "id": "T-C006-202610-01", "cliente_id": "C-006", "fecha": "2026-10-04", "sku": "LEVOTIROXINA", "cantidad": 1, "monto": 10, "canal": "pos", "pdv": "Medicity_Shyris" },
+    { "id": "T-C006-202610-02", "cliente_id": "C-006", "fecha": "2026-10-04", "sku": "LOSARTAN-50", "cantidad": 1, "monto": 12, "canal": "pos", "pdv": "Medicity_Shyris" },
+    { "id": "T-C007-202609-01", "cliente_id": "C-007", "fecha": "2026-09-12", "sku": "METFORMINA-850", "cantidad": 1, "monto": 10, "canal": "pos", "pdv": "Economicas_Centro" },
+    { "id": "T-C007-202609-02", "cliente_id": "C-007", "fecha": "2026-09-12", "sku": "PAÑALES-ADULTO-M", "cantidad": 1, "monto": 16, "canal": "pos", "pdv": "Economicas_Centro" },
+    { "id": "T-C007-202610-01", "cliente_id": "C-007", "fecha": "2026-10-10", "sku": "METFORMINA-850", "cantidad": 1, "monto": 10, "canal": "pos", "pdv": "Economicas_Centro" },
+    { "id": "T-C007-202610-02", "cliente_id": "C-007", "fecha": "2026-10-10", "sku": "PAÑALES-ADULTO-M", "cantidad": 1, "monto": 16, "canal": "pos", "pdv": "Economicas_Centro" },
+    { "id": "T-C008-202609-01", "cliente_id": "C-008", "fecha": "2026-09-15", "sku": "VITAMINA-C", "cantidad": 1, "monto": 8, "canal": "pos", "pdv": "Wellderma_Scala" },
+    { "id": "T-C008-202609-02", "cliente_id": "C-008", "fecha": "2026-09-15", "sku": "COMPLEJO-B", "cantidad": 1, "monto": 6, "canal": "pos", "pdv": "Wellderma_Scala" },
+    { "id": "T-C008-202609-03", "cliente_id": "C-008", "fecha": "2026-09-15", "sku": "PROTECTOR-FPS50", "cantidad": 1, "monto": 20, "canal": "pos", "pdv": "Wellderma_Scala" },
+    { "id": "T-C008-202610-01", "cliente_id": "C-008", "fecha": "2026-10-12", "sku": "VITAMINA-C", "cantidad": 1, "monto": 8, "canal": "pos", "pdv": "Wellderma_Scala" },
+    { "id": "T-C008-202610-02", "cliente_id": "C-008", "fecha": "2026-10-12", "sku": "ELECTROLITOS", "cantidad": 2, "monto": 6, "canal": "pos", "pdv": "Wellderma_Scala" },
+    { "id": "T-C009-202609-01", "cliente_id": "C-009", "fecha": "2026-09-18", "sku": "CREMA-HIDRATANTE", "cantidad": 1, "monto": 15, "canal": "pos", "pdv": "Wellderma_Scala" },
+    { "id": "T-C009-202609-02", "cliente_id": "C-009", "fecha": "2026-09-18", "sku": "SERUM-VITC", "cantidad": 1, "monto": 22, "canal": "pos", "pdv": "Wellderma_Scala" },
+    { "id": "T-C009-202610-01", "cliente_id": "C-009", "fecha": "2026-10-14", "sku": "LIMPIADOR-FACIAL", "cantidad": 1, "monto": 14, "canal": "pos", "pdv": "Wellderma_Scala" },
+    { "id": "T-C010-202607-01", "cliente_id": "C-010", "fecha": "2026-07-22", "sku": "DOG-CHOW-8KG", "cantidad": 1, "monto": 25, "canal": "pos", "pdv": "Mascotas_Granados" },
+    { "id": "T-C011-202608-01", "cliente_id": "C-011", "fecha": "2026-08-11", "sku": "VELA-AROMATICA", "cantidad": 1, "monto": 8, "canal": "pos", "pdv": "Ambiente_Scala" },
+    { "id": "T-C011-202608-02", "cliente_id": "C-011", "fecha": "2026-08-11", "sku": "TOALLITAS", "cantidad": 1, "monto": 9, "canal": "pos", "pdv": "Ambiente_Scala" },
+    { "id": "T-C012-202609-01", "cliente_id": "C-012", "fecha": "2026-09-29", "sku": "PARACETAMOL", "cantidad": 1, "monto": 3, "canal": "pos", "pdv": "Economicas_Norte" },
+    { "id": "T-C012-202609-02", "cliente_id": "C-012", "fecha": "2026-09-29", "sku": "IBUPROFENO", "cantidad": 1, "monto": 4, "canal": "pos", "pdv": "Economicas_Norte" }
   ]
 }
