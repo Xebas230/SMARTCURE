@@ -1,0 +1,7 @@
+{
+  "C-001": { "id": "C-001", "nombre": "José Torres", "cedula": "1701001001", "edad": 45, "marca_base": "Económicas", "smartclub": false, "opt_in_personalizacion": false, "cashback": 0.0, "rol_demo": "control_sin_shock" },
+  "C-002": { "id": "C-002", "nombre": "Lucía Andrade", "cedula": "1702002002", "edad": 29, "marca_base": "Wellderma", "smartclub": true, "opt_in_personalizacion": true, "cashback": 23.8, "rol_demo": "control_sin_shock_skincare" },
+  "C-003": { "id": "C-003", "nombre": "María Zambrano", "cedula": "1712345678", "edad": 38, "marca_base": "Medicity", "smartclub": true, "opt_in_personalizacion": true, "cashback": 41.2, "rol_demo": "DEMO_shock" },
+  "C-004": { "id": "C-004", "nombre": "Carlos Paredes", "cedula": "1704004004", "edad": 52, "marca_base": "Económicas", "smartclub": false, "opt_in_personalizacion": false, "cashback": 0.0, "rol_demo": "control_cronico" },
+  "C-005": { "id": "C-005", "nombre": "Daniela Espinoza", "cedula": "1705005005", "edad": 34, "marca_base": "Medicity", "smartclub": true, "opt_in_personalizacion": true, "cashback": 12.5, "rol_demo": "shock_prueba_en_vivo" }
+}

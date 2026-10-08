@@ -1,0 +1,8 @@
+{
+  "P-011": { "id": "P-011", "marca": "Mascotas", "categoria": "alimento_mascota", "tipo": "2x1", "valor": 0.50, "stock": 30, "margen_min": 0.15, "vigencia": "mes_siguiente" },
+  "P-012": { "id": "P-012", "marca": "Wellderma", "categoria": "skincare", "tipo": "descuento", "valor": 0.15, "stock": 40, "margen_min": 0.35, "vigencia": "15_dias" },
+  "P-013": { "id": "P-013", "marca": "Ambiente", "categoria": "hogar", "tipo": "cupon", "valor": 0.15, "stock": 25, "margen_min": 0.30, "vigencia": "30_dias" },
+  "P-014": { "id": "P-014", "marca": "Medicity", "categoria": "infantil", "tipo": "descuento", "valor": 0.10, "stock": 50, "margen_min": 0.15, "vigencia": "30_dias" },
+  "P-015": { "id": "P-015", "marca": "SmartClub", "categoria": "transversal", "tipo": "cashback_extra", "valor": 0.05, "stock": 9999, "margen_min": null, "vigencia": "mes_siguiente" },
+  "P-016": { "id": "P-016", "marca": "Económicas", "categoria": "vitaminas", "tipo": "descuento", "valor": 0.15, "stock": 60, "margen_min": 0.15, "vigencia": "30_dias" }
+}

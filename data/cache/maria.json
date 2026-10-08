@@ -1,0 +1,39 @@
+{
+  "cedula": "1712345678",
+  "nombre": "María Zambrano",
+  "generated_at": "2026-10-08T15:00:00Z",
+  "fuente": "cache_respaldo",
+  "nota": "Respuesta de respaldo (declarada en demo). Flujo preferido: Bedrock REAL genera este JSON al cargar la demo (warm-up, 1 llamada, límite sandbox 1 RPS) y se muestra desde caché; este archivo solo se usa si Bedrock falla o excede 4 s. El análisis de canasta, shock y reglas SIEMPRE corren en vivo con código determinista.",
+  "familia_inferida": [
+    { "tag": "hogar_con_bebe", "confianza": 0.97, "evidencia": ["PAÑALES-M", "FORMULA-800", "MULTIVITAMINICO-INF"] },
+    { "tag": "hogar_con_mascota", "confianza": 0.99, "evidencia": ["DOG-CHOW-8KG"] },
+    { "tag": "hogar_con_persona_mayor", "confianza": 0.95, "evidencia": ["LOSARTAN-50", "PAÑALES-ADULTO-M"], "visible_en_pos": false },
+    { "tag": "rutina_cuidado_personal", "confianza": 0.9, "evidencia": ["CREMA-HIDRATANTE", "PROTECTOR-FPS50"] }
+  ],
+  "baseline": 150,
+  "mes_actual": 210,
+  "delta_pct": 40,
+  "shock": {
+    "activo": true,
+    "contribuyentes": [
+      { "categoria": "salud", "label_ui": "esenciales", "usual": 42, "actual": 77, "delta": 35 },
+      { "categoria": "alimento_mascota", "label_ui": "mascota", "usual": 25, "actual": 50, "delta": 25 }
+    ],
+    "senales_adicionales": [
+      { "tipo": "trade_down", "categoria": "skincare", "label_ui": "cuidado personal", "detalle": "Cambió una marca premium por una alternativa más económica", "impacto": -7 },
+      { "tipo": "gasto_externo", "categoria": "movilidad", "detalle": "Mantenimiento preventivo BYD Yuan Pro", "monto": 89, "fuente": "smartclub_byd" }
+    ]
+  },
+  "ofertas": [
+    { "id": "P-011", "marca": "Mascotas", "categoria": "alimento_mascota", "tipo": "2x1", "valor": 0.5, "razon": "Su gasto en alimento del hogar subió este mes; el 2x1 protege el siguiente ciclo.", "cronico": false },
+    { "id": "P-012", "marca": "Wellderma", "categoria": "skincare", "tipo": "descuento", "valor": 0.15, "razon": "Optó por una alternativa más económica en cuidado personal; le devolvemos su rutina preferida.", "cronico": false },
+    { "id": "P-013", "marca": "Ambiente", "categoria": "hogar", "tipo": "cupon", "valor": 0.15, "razon": "Su gasto en hogar es estable; un cupón mantiene la categoría sin presionar el bolsillo.", "cronico": false },
+    { "id": "P-015", "marca": "SmartClub", "categoria": "transversal", "tipo": "cashback_extra", "valor": 0.05, "razon": "Refuerzo por ser socia SmartClub; canjeable en aliados del ecosistema, incluido BYD.", "cronico": false }
+  ],
+  "protegidos": [
+    { "categoria": "cronico", "nota": "Medicamentos crónicos sin descuento: disponibilidad y precio garantizados." }
+  ],
+  "copy_whatsapp": "Hola María. Este mes tu gasto en esenciales subió 40% sobre tu promedio. Activamos tu beneficio exclusivo del mes: 2x1 en Mascota's, 15% en Wellderma, cupón en Ambiente y cashback extra. Lo que siempre compras para tu familia no cambia. — SmartClub Pulse",
+  "copy_cajero": "Alivio familiar activo: 2x1 Mascota's · 15% Wellderma · cupón Ambiente · cashback +5%. Regla: NO ofrecer descuento en medicamentos crónicos.",
+  "canje_simulado": { "marca": "Mascotas", "monto": 25, "cashback_sumado": 1.25, "estado": "venta_cerrada" }
+}
