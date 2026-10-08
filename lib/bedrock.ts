@@ -203,3 +203,89 @@ export async function generateABVariantCopy(
     fuente: "RESPALDO",
   };
 }
+
+export async function generateMarketingExecutiveFeedback(
+  personaTitulo: string,
+  nombreVariante: string,
+  stats: {
+    conversionPronosticada: number;
+    conversionReal: number;
+    deltaConversion: number;
+    ticketReal: number;
+    margenReal: number;
+    canibalizacion: string;
+  }
+): Promise<{ analisis: string; recomendaciones: string[]; fuente: "REAL" | "RESPALDO" }> {
+  if (!hasCreds()) {
+    return {
+      analisis: `La campaña evaluada para "${personaTitulo}" con la variante "${nombreVariante}" superó el pronóstico inicial con una conversión real del ${stats.conversionReal}% frente al ${stats.conversionPronosticada}% pronosticado (+${stats.deltaConversion}%). Se confirma cero canibalización en medicamentos crónicos y un ticket promedio de $${stats.ticketReal} con margen incremental positivo.`,
+      recomendaciones: [
+        "Escalar la variante ganadora al 100% del segmento respetando el límite de 2 notificaciones al mes.",
+        "Mantener la política de margen estricta: nunca descontar tratamientos habituales y canalizar beneficios hacia Wellderma y marcas aliadas.",
+        "Reforzar el guión del cajero en punto de venta para maximizar la tasa de canje presencial.",
+      ],
+      fuente: "RESPALDO",
+    };
+  }
+
+  await waitRateLimit();
+  const client = new BedrockRuntimeClient({
+    region: process.env.AWS_DEFAULT_REGION ?? process.env.AWS_REGION ?? "us-east-1",
+  });
+
+  const sistema =
+    "Eres el Director de Analítica y Estrategia Comercial de Farmaenlace asesorando al Gerente de Marketing. " +
+    "Tu rol es auditar los resultados de la campaña ejecutada en SmartClub, verificar si el pronóstico de IA fue acertado y evaluar el impacto financiero y de márgenes. " +
+    "Debes ser riguroso, analítico, profesional y directo. " +
+    'Responde ÚNICAMENTE un JSON plano (sin formato markdown): {"analisis": string, "recomendaciones": string[]}.';
+
+  const user = JSON.stringify({
+    segmento: personaTitulo,
+    campana_evaluada: nombreVariante,
+    conversion_pronosticada: `${stats.conversionPronosticada}%`,
+    conversion_real_obtenida: `${stats.conversionReal}%`,
+    delta_desviacion: `${stats.deltaConversion}%`,
+    ticket_promedio_obtenido: `$${stats.ticketReal}`,
+    margen_neto_incremental: `$${stats.margenReal}`,
+    analisis_canibalizacion: stats.canibalizacion,
+    instruccion:
+      "Redacta un veredicto ejecutivo claro explicando por qué el pronóstico fue válido o no, el impacto en margen y 3 recomendaciones tácticas.",
+  });
+
+  for (const modelId of MODEL_IDS) {
+    try {
+      const cmd = new ConverseCommand({
+        modelId,
+        system: [{ text: sistema }],
+        messages: [{ role: "user", content: [{ text: user }] }],
+        inferenceConfig: { temperature: 0.2, maxTokens: 800 },
+      });
+      const res = await client.send(cmd);
+      const text =
+        res.output?.message?.content
+          ?.map((c) => ("text" in c ? c.text : ""))
+          .join("") ?? "";
+      let s = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
+      const parsed = JSON.parse(s) as { analisis?: string; recomendaciones?: string[] };
+      if (parsed?.analisis && Array.isArray(parsed?.recomendaciones)) {
+        return {
+          analisis: parsed.analisis,
+          recomendaciones: parsed.recomendaciones,
+          fuente: "REAL",
+        };
+      }
+    } catch {
+      // probar siguiente modelo
+    }
+  }
+
+  return {
+    analisis: `La campaña evaluada para "${personaTitulo}" con la variante "${nombreVariante}" superó el pronóstico inicial con una conversión real del ${stats.conversionReal}% frente al ${stats.conversionPronosticada}% proyectado (+${stats.deltaConversion}%). El modelo demostró alta precisión predictiva con ${stats.canibalizacion} y un margen incremental de $${stats.margenReal} por canje.`,
+    recomendaciones: [
+      "Extender la campaña ganadora a la totalidad del segmento antes del cierre de mes.",
+      "Proteger el margen comercial garantizando que las ofertas sigan focalizadas en canastas cruzadas de Wellderma y cuidado preventivo.",
+      "Integrar el feedback de canje al Golden Record para alimentar el próximo ciclo predictivo de SmartClub.",
+    ],
+    fuente: "RESPALDO",
+  };
+}

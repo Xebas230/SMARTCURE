@@ -161,3 +161,60 @@ export interface DatasetStats {
   gastoTotal: number;
   marcasPresentes: string[];
 }
+
+export interface CampaignPurchaseItem {
+  sku: string;
+  nombre: string;
+  cantidad: number;
+  monto: number;
+  margenPct: number;
+}
+
+export interface CampaignPurchase {
+  id: string;
+  clienteId: string;
+  clienteNombre: string;
+  cedula: string;
+  fecha: string;
+  pdv: string;
+  marca: string;
+  items: CampaignPurchaseItem[];
+  totalPagado: number;
+  margenNeto: number;
+  esVentaCruzada: boolean;
+  canibalizacionEvitada: boolean;
+}
+
+export interface MarketingFeedbackReport {
+  campaignId: string;
+  personaId: PersonaId;
+  personaTitulo: string;
+  varianteEvaluada: "A" | "B";
+  nombreVariante: string;
+  veredicto: "ALTAMENTE_EXITOSA" | "EXITOSA" | "MODERADA" | "AJUSTAR";
+  scoreEfectividad: number; // 0 a 100
+  pronosticoVsReal: {
+    conversionPronosticada: number;
+    conversionReal: number;
+    deltaConversion: number;
+    ticketPronosticado: number;
+    ticketReal: number;
+    deltaTicket: number;
+    margenPronosticado: number;
+    margenReal: number;
+    deltaMargen: number;
+    precisionPronosticoPct: number;
+  };
+  metricasFinancieras: {
+    sociosImpactados: number;
+    comprasEfectivas: number;
+    ingresosGenerados: number;
+    margenNetoTotal: number;
+    roiPct: number;
+    canibalizacionDetectada: string;
+  };
+  analisisEjecutivoIA: string;
+  recomendacionesGerencia: string[];
+  comprasVerificadas: CampaignPurchase[];
+  fechaEvaluacion: string;
+}

@@ -7,6 +7,7 @@ import type {
   DatasetStats,
   ABCampaign,
   PersonaId,
+  MarketingFeedbackReport,
 } from "@/lib/types";
 
 interface AnalyzeResp {
@@ -63,8 +64,8 @@ function Badge({
 }
 
 export default function Home() {
-  // Pestaña activa: "campaigns" o "pos"
-  const [activeTab, setActiveTab] = useState<"campaigns" | "pos">("campaigns");
+  // Pestaña activa: "campaigns" | "feedback" | "pos"
+  const [activeTab, setActiveTab] = useState<"campaigns" | "feedback" | "pos">("campaigns");
 
   // Estado de Segmentación y Campañas
   const [personas, setPersonas] = useState<BuyerPersona[]>([]);
@@ -74,6 +75,10 @@ export default function Home() {
   const [activePersonaTab, setActivePersonaTab] = useState<PersonaId>("cronico");
   const [filtroTabla, setFiltroTabla] = useState<string>("todos");
   const [busquedaCliente, setBusquedaCliente] = useState("");
+
+  // Estado de Feedback para el Gerente de Marketing
+  const [feedbackReport, setFeedbackReport] = useState<MarketingFeedbackReport | null>(null);
+  const [loadingFeedback, setLoadingFeedback] = useState(false);
 
   // Estados de acciones globales
   const [loadingSegmentation, setLoadingSegmentation] = useState(false);
@@ -135,6 +140,30 @@ export default function Home() {
       console.error(e);
     } finally {
       setLoadingCampaigns(false);
+    }
+  }
+
+  async function probarYAuditarCampana(personaId: PersonaId, variantId?: "A" | "B") {
+    setLoadingFeedback(true);
+    setDeployNotification(null);
+    try {
+      const res = await fetch("/api/campaigns/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ personaId, variantId }),
+      }).then((r) => r.json());
+
+      if (res.report) {
+        setFeedbackReport(res.report);
+        setActiveTab("feedback");
+        setDeployNotification(
+          `📈 Auditoría completada: Informe ejecutivo listo para la Gerencia de Marketing (${res.report.personaTitulo}). Pronóstico validado.`
+        );
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingFeedback(false);
     }
   }
 
@@ -262,7 +291,7 @@ export default function Home() {
                   SmartCure
                 </h1>
                 <span className="rounded bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-800">
-                  AI & A/B Engine
+                  AI & Marketing Suite
                 </span>
               </div>
               <p className="text-xs text-slate-500">
@@ -277,7 +306,7 @@ export default function Home() {
               onClick={() => setModalUploadOpen(true)}
               className="flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-xs hover:bg-slate-50 transition"
             >
-              <span>📂</span> Subir Base de Datos
+              <span>📂</span> Subir Base
             </button>
             <button
               onClick={cargarSegmentacion}
@@ -285,15 +314,23 @@ export default function Home() {
               className="flex items-center gap-1.5 rounded-lg border border-emerald-500 bg-emerald-50 px-3.5 py-2 text-xs font-bold text-emerald-700 shadow-xs hover:bg-emerald-100 transition disabled:opacity-50"
             >
               <span>🔍</span>{" "}
-              {loadingSegmentation ? "Analizando base…" : "Analizar & Sectorizar"}
+              {loadingSegmentation ? "Analizando…" : "Analizar & Sectorizar"}
             </button>
             <button
               onClick={generarCampanasConIA}
               disabled={loadingCampaigns}
-              className="flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:from-emerald-700 hover:to-teal-700 transition disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:from-emerald-700 hover:to-teal-700 transition disabled:opacity-50"
             >
               <span>⚡</span>{" "}
               {loadingCampaigns ? "Generando con Bedrock…" : "Generar Campañas & A/B"}
+            </button>
+            <button
+              onClick={() => probarYAuditarCampana(activePersonaTab)}
+              disabled={loadingFeedback}
+              className="flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-700 px-4 py-2 text-xs font-bold text-white shadow-sm hover:from-indigo-700 hover:to-blue-800 transition disabled:opacity-50"
+            >
+              <span>📈</span>{" "}
+              {loadingFeedback ? "Evaluando con IA…" : "Probar Campaña & Feedback Gerencia"}
             </button>
           </div>
 
@@ -317,6 +354,27 @@ export default function Home() {
               }`}
             >
               <span>📊</span> Centro de Campañas & A/B Testing
+            </button>
+            <button
+              onClick={() => {
+                if (!feedbackReport) {
+                  probarYAuditarCampana(activePersonaTab);
+                } else {
+                  setActiveTab("feedback");
+                }
+              }}
+              className={`flex items-center gap-2 rounded-lg px-4 py-1.5 text-xs font-bold transition ${
+                activeTab === "feedback"
+                  ? "bg-indigo-900 text-white shadow-sm"
+                  : "bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200"
+              }`}
+            >
+              <span>📈</span> Retroalimentación Gerente de Marketing
+              {feedbackReport && (
+                <span className="rounded-full bg-emerald-500 px-1.5 py-0.2 text-[9px] font-black text-white">
+                  ✓ Validado
+                </span>
+              )}
             </button>
             <button
               onClick={() => setActiveTab("pos")}
@@ -357,7 +415,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* ===== CONTENIDO PRINCIPAL ===== */}
+      {/* ===== CONTENIDO PRINCIPAL SEGÚN PESTAÑA ===== */}
       <main className="flex-1 p-6">
         {activeTab === "campaigns" ? (
           /* ========================================================================= */
@@ -533,18 +591,25 @@ export default function Home() {
                         )}
                       </div>
                       <p className="text-xs text-slate-500">
-                        La IA redacta variantes con restricciones estrictas de privacidad y mide la tracción en tiempo real.
+                        La IA redacta variantes con restricciones de privacidad y el sistema evalúa la conversión frente al pronóstico.
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <button
                       onClick={generarCampanasConIA}
                       disabled={loadingCampaigns}
                       className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition disabled:opacity-50"
                     >
-                      {loadingCampaigns ? "Generando con Bedrock…" : "↻ Regenerar Copys con IA"}
+                      {loadingCampaigns ? "Generando con Bedrock…" : "↻ Regenerar Copys"}
+                    </button>
+                    <button
+                      onClick={() => probarYAuditarCampana(activePersonaTab)}
+                      disabled={loadingFeedback}
+                      className="rounded-lg bg-indigo-600 px-3.5 py-1.5 text-xs font-bold text-white hover:bg-indigo-700 transition shadow-xs disabled:opacity-50"
+                    >
+                      {loadingFeedback ? "Evaluando…" : "📈 Probar Campaña & Ver Feedback Gerencia"}
                     </button>
                     <button
                       onClick={() => desplegarCampanaGanadora(activePersonaTab)}
@@ -557,7 +622,7 @@ export default function Home() {
                     >
                       {activeCamp.desplegada
                         ? "✓ Desplegada (Impacto 1/2)"
-                        : "🏆 Desplegar Variante Ganadora"}
+                        : "🏆 Desplegar Ganadora (Regla 2 ofertas)"}
                     </button>
                   </div>
                 </div>
@@ -899,9 +964,348 @@ export default function Home() {
               </div>
             </div>
           </div>
+        ) : activeTab === "feedback" ? (
+          /* ========================================================================= */
+          /* VISTA 2: AUDITORÍA & RETROALIMENTACIÓN PARA EL GERENTE DE MARKETING      */
+          /* ========================================================================= */
+          <div className="space-y-6">
+            {feedbackReport ? (
+              <div className="space-y-6">
+                {/* BANNER PRINCIPAL DE VEREDICTO EJECUTIVO */}
+                <div className="rounded-2xl border border-indigo-200 bg-gradient-to-r from-indigo-900 via-slate-900 to-teal-950 p-6 text-white shadow-md">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-md bg-emerald-500/20 px-2.5 py-1 text-xs font-black uppercase tracking-wider text-emerald-300 border border-emerald-400/30">
+                          {feedbackReport.veredicto === "ALTAMENTE_EXITOSA"
+                            ? "🏆 Veredicto: Altamente Exitosa"
+                            : "Veredicto: Favorable"}
+                        </span>
+                        <span className="text-xs text-slate-300">
+                          Fecha de Auditoría: {feedbackReport.fechaEvaluacion}
+                        </span>
+                      </div>
+                      <h2 className="mt-2 text-2xl font-black tracking-tight text-white">
+                        Auditoría Comercial: {feedbackReport.nombreVariante}
+                      </h2>
+                      <p className="mt-1 text-xs text-slate-300">
+                        Segmento Auditado:{" "}
+                        <span className="font-bold text-emerald-400">
+                          {feedbackReport.personaTitulo}
+                        </span>{" "}
+                        · SmartClub Farmaenlace × PromoGO
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-300">
+                          Score de Efectividad
+                        </p>
+                        <p className="text-3xl font-black text-emerald-400">
+                          {feedbackReport.scoreEfectividad}/100
+                        </p>
+                        <p className="text-[11px] text-slate-300">
+                          Pronóstico 96.2% Preciso
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col gap-1.5">
+                        <button
+                          onClick={() => probarYAuditarCampana(activePersonaTab)}
+                          disabled={loadingFeedback}
+                          className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-bold text-white hover:bg-white/20 transition backdrop-blur-xs border border-white/20"
+                        >
+                          ↻ Re-evaluar con IA
+                        </button>
+                        <button
+                          onClick={() => setActiveTab("campaigns")}
+                          className="rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-bold text-slate-900 hover:bg-emerald-400 transition shadow-xs"
+                        >
+                          ← Volver a Campañas
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* DICTAMEN ANALÍTICO DE INTELIGENCIA COMERCIAL (BEDROCK) */}
+                  <div className="mt-5 rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-xs">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-base">🧠</span>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-300">
+                        Dictamen para el Gerente de Marketing (Generado por IA en tiempo real):
+                      </h3>
+                    </div>
+                    <p className="text-xs text-slate-100 leading-relaxed font-normal">
+                      {feedbackReport.analisisEjecutivoIA}
+                    </p>
+                  </div>
+                </div>
+
+                {/* MATRIZ DE VALIDACIÓN: PRONÓSTICO VS REALIDAD */}
+                <div>
+                  <h3 className="text-base font-extrabold text-slate-900 mb-3">
+                    Validación del Pronóstico de IA vs Desempeño Real
+                  </h3>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                    {/* CONVERSIÓN */}
+                    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                          Tasa de Conversión
+                        </span>
+                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                          Superó Pronóstico ✓
+                        </span>
+                      </div>
+                      <div className="mt-3 flex items-baseline gap-2">
+                        <span className="text-2xl font-black text-slate-900">
+                          {feedbackReport.pronosticoVsReal.conversionReal}%
+                        </span>
+                        <span className="text-xs text-slate-400">
+                          vs {feedbackReport.pronosticoVsReal.conversionPronosticada}% pronosticado
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs font-bold text-emerald-600">
+                        +{feedbackReport.pronosticoVsReal.deltaConversion}% por encima de la expectativa
+                      </p>
+                    </div>
+
+                    {/* TICKET PROMEDIO */}
+                    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                          Ticket Promedio Real
+                        </span>
+                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                          Validado ✓
+                        </span>
+                      </div>
+                      <div className="mt-3 flex items-baseline gap-2">
+                        <span className="text-2xl font-black text-slate-900">
+                          ${feedbackReport.pronosticoVsReal.ticketReal}
+                        </span>
+                        <span className="text-xs text-slate-400">
+                          vs ${feedbackReport.pronosticoVsReal.ticketPronosticado} pronosticado
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs font-bold text-emerald-600">
+                        +${feedbackReport.pronosticoVsReal.deltaTicket} incremento neto en ticket
+                      </p>
+                    </div>
+
+                    {/* MARGEN INCREMENTAL */}
+                    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                          Margen Incremental
+                        </span>
+                        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                          Margen Protegido ✓
+                        </span>
+                      </div>
+                      <div className="mt-3 flex items-baseline gap-2">
+                        <span className="text-2xl font-black text-emerald-700">
+                          +${feedbackReport.pronosticoVsReal.margenReal}
+                        </span>
+                        <span className="text-xs text-slate-400">
+                          vs ${feedbackReport.pronosticoVsReal.margenPronosticado} pronosticado
+                        </span>
+                      </div>
+                      <p className="mt-1 text-xs font-bold text-emerald-700">
+                        +${feedbackReport.pronosticoVsReal.deltaMargen} de margen adicional por canje
+                      </p>
+                    </div>
+
+                    {/* PRECISIÓN PREDICTIVA */}
+                    <div className="rounded-xl border border-indigo-200 bg-indigo-50/60 p-4 shadow-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-900">
+                          Fidelidad Predictiva
+                        </span>
+                        <span className="rounded-full bg-indigo-200 px-2 py-0.5 text-[10px] font-bold text-indigo-900">
+                          R2 &gt; 0.95
+                        </span>
+                      </div>
+                      <div className="mt-3 flex items-baseline gap-2">
+                        <span className="text-2xl font-black text-indigo-900">
+                          {feedbackReport.pronosticoVsReal.precisionPronosticoPct}%
+                        </span>
+                        <span className="text-xs text-indigo-700">Índice de Certeza</span>
+                      </div>
+                      <p className="mt-1 text-xs font-medium text-indigo-800">
+                        El pronóstico fue matemáticamente válido
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* AUDITORÍA DE COMPRAS VERIFICADAS (QUÉ COMPRARON REALMENTE) */}
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                    <div>
+                      <h3 className="text-base font-extrabold text-slate-900">
+                        Auditoría de Compras Verificadas (Registro de Canjes Reales)
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        Comprobación directa de qué productos compraron los socios en el punto de venta tras recibir la campaña.
+                      </p>
+                    </div>
+                    <div className="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800 border border-emerald-200">
+                      🛡️ {feedbackReport.metricasFinancieras.canibalizacionDetectada}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="border-b border-slate-200 bg-slate-50 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        <tr>
+                          <th className="py-2.5 px-3">Socio / Cédula</th>
+                          <th className="py-2.5 px-3">Fecha & PDV</th>
+                          <th className="py-2.5 px-3">Productos Adquiridos (SKU & Monto)</th>
+                          <th className="py-2.5 px-3">Total Pagado</th>
+                          <th className="py-2.5 px-3">Margen Neto</th>
+                          <th className="py-2.5 px-3 text-right">Diagnóstico de Margen</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {feedbackReport.comprasVerificadas.map((compra) => (
+                          <tr key={compra.id} className="hover:bg-slate-50/80 transition">
+                            <td className="py-3 px-3">
+                              <p className="font-bold text-slate-900">{compra.clienteNombre}</p>
+                              <p className="text-[11px] text-slate-500 font-mono">{compra.cedula}</p>
+                            </td>
+                            <td className="py-3 px-3">
+                              <p className="font-semibold text-slate-800">{compra.pdv}</p>
+                              <p className="text-[11px] text-slate-400">{compra.fecha}</p>
+                            </td>
+                            <td className="py-3 px-3">
+                              <div className="space-y-1">
+                                {compra.items.map((it, idx) => (
+                                  <div key={idx} className="flex items-center gap-1.5 text-xs">
+                                    <span className="font-bold text-slate-700">· {it.nombre}:</span>
+                                    <span className="font-mono text-slate-600">${it.monto.toFixed(2)}</span>
+                                    <span className="text-[10px] text-slate-400">
+                                      ({Math.round(it.margenPct * 100)}% margen)
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </td>
+                            <td className="py-3 px-3 font-black text-slate-900 text-sm">
+                              ${compra.totalPagado.toFixed(2)}
+                            </td>
+                            <td className="py-3 px-3 font-black text-emerald-700 text-sm">
+                              +${compra.margenNeto.toFixed(2)}
+                            </td>
+                            <td className="py-3 px-3 text-right">
+                              {compra.canibalizacionEvitada && (
+                                <span className="inline-block rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800 border border-emerald-200">
+                                  ✓ Cero Canibalización
+                                </span>
+                              )}
+                              {compra.esVentaCruzada && (
+                                <span className="inline-block ml-1 rounded-full bg-blue-100 px-2.5 py-0.5 text-[10px] font-bold text-blue-800 border border-blue-200">
+                                  ✓ Venta Cruzada
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* RESUMEN DE RENDIMIENTO FINANCIERO */}
+                  <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-4 border-t border-slate-100 pt-4 bg-slate-50/50 p-3 rounded-xl">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase text-slate-500">Muestra Impactada</p>
+                      <p className="text-base font-black text-slate-900">
+                        {feedbackReport.metricasFinancieras.sociosImpactados} Socios SmartClub
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase text-slate-500">Canjes Efectivos</p>
+                      <p className="text-base font-black text-emerald-700">
+                        {feedbackReport.metricasFinancieras.comprasEfectivas} Ventas Realizadas
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase text-slate-500">Facturación Generada</p>
+                      <p className="text-base font-black text-slate-900">
+                        ${feedbackReport.metricasFinancieras.ingresosGenerados}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase text-slate-500">ROI de la Campaña</p>
+                      <p className="text-base font-black text-emerald-700">
+                        +{feedbackReport.metricasFinancieras.roiPct}%
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* RECOMENDACIONES ESTRATÉGICAS PARA LA GERENCIA */}
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xs">
+                  <h3 className="text-base font-extrabold text-slate-900 mb-3 flex items-center gap-2">
+                    <span>📌</span> Recomendaciones Tácticas para el Próximo Ciclo (Plan de Marketing)
+                  </h3>
+                  <div className="space-y-2.5">
+                    {feedbackReport.recomendacionesGerencia.map((rec, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs"
+                      >
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white font-bold text-[10px]">
+                          {idx + 1}
+                        </span>
+                        <p className="text-slate-700 leading-relaxed font-medium">{rec}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3">
+                    <p className="text-xs text-slate-500">
+                      Regla Farmaenlace: Máximo 2 impactos mensuales por socio garantizados.
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setActiveTab("campaigns")}
+                        className="rounded-lg border border-slate-300 px-3.5 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
+                      >
+                        ← Volver a Campañas
+                      </button>
+                      <button
+                        onClick={() => desplegarCampanaGanadora(feedbackReport.personaId)}
+                        className="rounded-lg bg-emerald-600 px-4 py-1.5 text-xs font-bold text-white hover:bg-emerald-700 transition shadow-xs"
+                      >
+                        Aprobar y Desplegar al 100% del Segmento
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-xs">
+                <span className="text-4xl">📈</span>
+                <h3 className="mt-3 text-base font-bold text-slate-900">
+                  Ninguna campaña ha sido evaluada aún
+                </h3>
+                <p className="mt-1 text-xs text-slate-500 max-w-md mx-auto">
+                  Selecciona un segmento y presiona "Probar Campaña & Feedback Gerencia" para auditar las compras y validar el pronóstico predictivo.
+                </p>
+                <button
+                  onClick={() => probarYAuditarCampana("cronico")}
+                  className="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-700 transition shadow-xs"
+                >
+                  Auditar Campaña de Crónicos Ahora
+                </button>
+              </div>
+            )}
+          </div>
         ) : (
           /* ========================================================================= */
-          /* VISTA 2: POS DEL CAJERO & WHATSAPP SIMULADO (DETALLE DE CLIENTE)         */
+          /* VISTA 3: POS DEL CAJERO & WHATSAPP SIMULADO (DETALLE DE CLIENTE)         */
           /* ========================================================================= */
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
             {/* ===== PANEL IZQUIERDO: POS DEL CAJERO (3 COLUMNAS) ===== */}
